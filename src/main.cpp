@@ -25,22 +25,14 @@ void dtmfWorker(){
   // Return if character is empty or sequence is empty
   if(dtmfSystem.detectDTMF(listener.getBuffer(), listener.getBufferSize())) return;
   if(dtmfSystem.getSequence().length() == 0) return;
-  
-  Serial.printf("Current Sequence: %s\n", dtmfSystem.getSequence());
 
   if(!commandSystem.execute(dtmfSystem.getSequence(), "")) return;
   dtmfSystem.clearSequence();
   
 }
 
-void commandRunnerWorker(){
-  String command = dtmfSystem.getSequence();
-  if(command.length() == 0) return;
-  commandSystem.execute(command, "");
-}
-
 // ==========================================
-// COMMANDS (User Actions)
+// COMMANDS (DTMF Actions)
 // ==========================================
 
 void pair(String args){
@@ -61,8 +53,8 @@ void setup() {
 
   workerSystem.addWorker(&listener, 50);
   workerSystem.addWorker(dtmfWorker, 50);
-  //workerSystem.addWorker(&vuMeter, 20);
-  workerSystem.addWorker(&testWorker, 500);
+  workerSystem.addWorker(&vuMeter, 20);
+  //workerSystem.addWorker(&testWorker, 500);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);

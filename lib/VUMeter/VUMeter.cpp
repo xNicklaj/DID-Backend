@@ -1,5 +1,6 @@
 #include "VUMeter.h"
 #include <Adafruit_NeoPixel.h>
+#include <Arduino.h>
 
 Adafruit_NeoPixel strip(kPixels, kPin, NEO_GRB + NEO_KHZ800);
 
@@ -35,7 +36,7 @@ void VUMeter::update(){
 
     float rms = sqrt(level);
 
-    int ledLvl = rms / 100;
+    int ledLvl = constrain(rms / SOUND_LEVEL_CAP * kPixels, 0, kPixels);
     for (int i = 0; i < kPixels; i++)
         strip.setPixelColor(i, i >= ledLvl ? 0 : (i > 5 ? strip.Color(150, 0, 0) : (i > 3 ? strip.Color(150, 150, 0) : strip.Color(0, 150, 0))));
     strip.show();

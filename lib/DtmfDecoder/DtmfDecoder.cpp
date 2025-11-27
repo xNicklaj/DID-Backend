@@ -27,10 +27,15 @@ float DTMFDecoder::Goertzel(float freq0, int32_t* buff, int buffSize) {
 }
 
 void DTMFDecoder::addToSequence(char key) {
+    if(key == sequence[SEQ_SIZE - 1]) {
+        // Same as last key, ignore
+        return;
+    }
     for (int i = 0; i < SEQ_SIZE - 1; i++) {
         sequence[i] = sequence[i + 1];
     }
     sequence[SEQ_SIZE - 1] = key;
+    Serial.printf("Current Sequence: %s\n", getSequence().c_str());
 }
 
 char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
