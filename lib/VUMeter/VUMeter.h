@@ -9,14 +9,14 @@
 const uint16_t kPixels = 8;
 const uint8_t  kPin    = 13; // CHECK YOUR CONNECTIONS !!!
 
-extern Adafruit_NeoPixel strip;
+extern Adafruit_NeoPixel ledStrip;
 
 class VUMeter : public Worker {
 private:
     SoundListener* listener;
 public:
-    void setup();
-    void update();
+    void setup() override;
+    void update() override;
 
     void setListener(SoundListener* lst) {
         listener = lst;

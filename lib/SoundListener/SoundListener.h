@@ -14,8 +14,8 @@ private:
     size_t bytesRead;
 
 public:
-    void setup();
-    void update();
+    void setup() override;
+    void update() override;
 
     int getBufferSize();
     int32_t* getBuffer();
