@@ -23,13 +23,10 @@ public:
     // API: Register a new command string and its handler function
     void registerCommand(String name, CommandCallback func);
 
-    // API: Listen for Serial input and execute commands
-    void update();
-
     bool execute(String cmdName, String args);
 
 private:
-    void processBuffer();
+
 };
 
 #endif

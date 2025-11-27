@@ -46,7 +46,7 @@ void SoundListener::setup(){
 #endif
 }
 
-void SoundListener::execute(){
+void SoundListener::update(){
     // ensure bytesRead starts at 0
     bytesRead = 0;
 
@@ -69,7 +69,6 @@ void SoundListener::execute(){
         // Extract left channel (assuming interleaved stereo)
         if(soundBuffer[i] != 0) d++;
     }
-    Serial.println(d);
 }
 
 int SoundListener::getBufferSize(){

@@ -8,7 +8,16 @@ void VUMeter::setup(){
     strip.show();
 }
 
-void VUMeter::update(int32_t* buffer, size_t size, size_t bytesRead){
+void VUMeter::update(){
+    // Nothing to do here for now
+    if(listener == nullptr){
+        Serial.println("VUMeter: No SoundListener assigned!");
+        return;
+    }
+
+    int32_t* buffer = listener->getBuffer();
+    size_t bytesRead = listener->getBytesRead();
+
     int samples = bytesRead / 4;
 
     if (samples <= 0) {

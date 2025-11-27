@@ -19,10 +19,6 @@ VUMeter vuMeter;
 // VIRTUAL WORKERS (Periodic Tasks)
 // ==========================================
 
-void soundListenerWorker(){
-  listener.execute();
-}
-
 void dtmfWorker(){
   // Return if character is empty or sequence is empty
   if(dtmfSystem.detectDTMF(listener.getBuffer(), listener.getBufferSize())) return;
@@ -35,14 +31,14 @@ void dtmfWorker(){
   
 }
 
-void vuMeterWorker(){
-  vuMeter.update(listener.getBuffer(), listener.getBufferSize(), listener.getBytesRead());
-}
-
 void commandRunnerWorker(){
   String command = dtmfSystem.getSequence();
   if(command.length() == 0) return;
   commandSystem.execute(command, "");
+}
+
+void testWorker(){
+  Serial.println("Test Worker Running...");
 }
 
 // ==========================================
@@ -63,9 +59,14 @@ void setup() {
   // 1. Setup Workers
   listener.setup();
   vuMeter.setup();
-  workerSystem.addWorker(soundListenerWorker, 50);
+  vuMeter.setListener(&listener);
+
+  workerSystem.addWorker(&listener, 50);
   workerSystem.addWorker(dtmfWorker, 50);
-  workerSystem.addWorker(vuMeterWorker, 20);
+  workerSystem.addWorker(&vuMeter, 20);
+
+  
+  workerSystem.addWorker(testWorker, 1000);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
