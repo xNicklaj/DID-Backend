@@ -1,12 +1,10 @@
+#include <Arduino.h>
+
 #include <TaskScheduler.h>
 #include <CommandDispatcher.h>
 #include <DtmfDecoder.h>
 #include <SoundListener.h>
 #include <VUMeter.h>
-
-#include <Arduino.h>
-
-#define DTMF_WORKER_BUFF_SIZE 256
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -16,7 +14,6 @@ SoundListener listener;
 VUMeter vuMeter;
 
 // --- Hardware/State Variables ---
-
 
 // ==========================================
 // VIRTUAL WORKERS (Periodic Tasks)
@@ -39,8 +36,7 @@ void dtmfWorker(){
 }
 
 void vuMeterWorker(){
-  Serial.println("Updating VU Meter...");
-  vuMeter.update(listener.getBuffer(), listener.getBufferSize());
+  vuMeter.update(listener.getBuffer(), listener.getBufferSize(), listener.getBytesRead());
 }
 
 void commandRunnerWorker(){
@@ -63,14 +59,13 @@ void pair(String args){
 
 void setup() {
   Serial.begin(115200);
-  sleep(200);
-
+  
   // 1. Setup Workers
   listener.setup();
   vuMeter.setup();
   workerSystem.addWorker(soundListenerWorker, 50);
   workerSystem.addWorker(dtmfWorker, 50);
-  workerSystem.addWorker(vuMeterWorker, 100);
+  workerSystem.addWorker(vuMeterWorker, 20);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
@@ -79,7 +74,6 @@ void setup() {
 }
 
 void loop() {
-  // The loop remains clean, delegating logic to the managers
-  Serial.println("Looping...");
+  //Serial.println("Looping...");
   workerSystem.update();
 }

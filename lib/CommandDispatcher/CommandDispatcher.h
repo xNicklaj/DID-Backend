@@ -18,63 +18,18 @@ private:
     String inputBuffer;
 
 public:
-    CommandDispatcher() : head(nullptr), inputBuffer("") {}
+    CommandDispatcher();
 
     // API: Register a new command string and its handler function
-    void registerCommand(String name, CommandCallback func) {
-        CommandNode* newNode = new CommandNode;
-        newNode->name = name;
-        newNode->name.toUpperCase();
-        newNode->callback = func;
-        newNode->next = head;
-        head = newNode;
-    }
+    void registerCommand(String name, CommandCallback func);
 
     // API: Listen for Serial input and execute commands
-    void update() {
-        while (Serial.available() > 0) {
-            char inChar = (char)Serial.read();
-            if (inChar == '\n') {
-                processBuffer();
-                inputBuffer = "";
-            } else if (inChar != '\r') {
-                inputBuffer += inChar;
-            }
-        }
-    }
+    void update();
 
-    bool execute(String cmdName, String args) {
-        CommandNode* current = head;
-        bool found = false;
-        while (current != nullptr) {
-            if (current->name == cmdName) {
-                current->callback(args);
-                found = true;
-                break;
-            }
-            current = current->next;
-        }
-        if (!found) {
-            Serial.print("Unknown command: ");
-            Serial.println(cmdName);
-        }
-        return found;
-    }
+    bool execute(String cmdName, String args);
 
 private:
-    void processBuffer() {
-        inputBuffer.trim();
-        if (inputBuffer.length() == 0) return;
-
-        int spaceIndex = inputBuffer.indexOf(' ');
-        String cmdName = (spaceIndex == -1) ? inputBuffer : inputBuffer.substring(0, spaceIndex);
-        String args = (spaceIndex == -1) ? "" : inputBuffer.substring(spaceIndex + 1);
-
-        cmdName.toUpperCase();
-        execute(cmdName, args);
-    }
-
-    
+    void processBuffer();
 };
 
 #endif

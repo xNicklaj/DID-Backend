@@ -18,31 +18,13 @@ private:
     TaskNode* head;
 
 public:
-    TaskScheduler() : head(nullptr) {}
+    TaskScheduler();
 
     // API: Add a function to be called every 'interval' milliseconds
-    void addWorker(TaskCallback func, unsigned long intervalMs) {
-        TaskNode* newNode = new TaskNode;
-        newNode->callback = func;
-        newNode->interval = intervalMs;
-        newNode->lastRun = 0;
-        newNode->next = head;
-        head = newNode;
-    }
+    void addWorker(TaskCallback func, unsigned long intervalMs);
 
     // API: Call this in the main loop to keep workers running
-    void update() {
-        unsigned long currentMillis = millis();
-        TaskNode* current = head;
-        
-        while (current != nullptr) {
-            if (currentMillis - current->lastRun >= current->interval) {
-                current->lastRun = currentMillis;
-                current->callback(); 
-            }
-            current = current->next;
-        }
-    }
+    void update();
 };
 
 #endif
