@@ -55,9 +55,9 @@ void setup() {
   vuMeter.setup();
   vuMeter.setListener(&listener);
 
-  workerSystem.addWorker(&listener, 50);
-  workerSystem.addWorker(dtmfWorker, 50);
-  workerSystem.addWorker(&vuMeter, 20);
+  workerSystem.addWorker(&listener, 20);
+  workerSystem.addWorker(dtmfWorker, 25);
+  workerSystem.addWorker(&vuMeter, 100);
   //workerSystem.addWorker(&testWorker, 500);
 
   // 2. Setup Commands

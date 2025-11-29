@@ -38,13 +38,6 @@ void SoundListener::setup(){
     i2s_zero_dma_buffer(I2S_NUM_0);
     delay(200);
     Serial.println("I2S OK");
-
-#ifdef SAMPLING_RATE
-    Serial.print("SAMPLING_RATE=");
-    Serial.println(SAMPLING_RATE);
-#else
-    Serial.println("SAMPLING_RATE not defined");
-#endif
 }
 
 void SoundListener::update(){
