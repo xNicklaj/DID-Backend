@@ -8,6 +8,8 @@ typedef void (*CommandCallback)(String args);
 
 struct CommandNode {
     String name;
+    // number of characters expected as parameters after the command
+    int paramLength;
     CommandCallback callback;
     CommandNode* next;
 };
@@ -20,8 +22,9 @@ private:
 public:
     CommandDispatcher();
 
-    // API: Register a new command string and its handler function
-    void registerCommand(String name, CommandCallback func);
+    // API: Register a new command string, its handler function, and expected parameter length
+    // `paramLength` defaults to 0 (no parameters)
+    void registerCommand(String name, CommandCallback func, int paramLength = 0);
 
     bool execute(String cmdName, String args);
 

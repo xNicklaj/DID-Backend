@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 #define SAMPLING_RATE 8000
-#define SEQ_SIZE 5
+#define SEQ_SIZE 8
 
 // --- DTMF Configuration ---
 #define DTMF_THRESHOLD 1000000000.0 
@@ -40,7 +40,6 @@ public:
 
     /**
      * Scans the buffer for DTMF tones.
-     * Automatically updates the internal sequence if a NEW key press is detected.
      */
     char detectDTMF(int32_t* buff, int buffSize);
 

@@ -39,6 +39,10 @@ void pair(String args){
   Serial.println("PAIRED");
 }
 
+void open(String args){
+  Serial.printf("OPENED %s\n", args.c_str());
+}
+
 // ==========================================
 // SETUP & LOOP
 // ==========================================
@@ -58,11 +62,11 @@ void setup() {
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
+  commandSystem.registerCommand("*341#", open, 1);
 
   Serial.println("System Ready.");
 }
 
 void loop() {
-  //Serial.println("Looping...");
   workerSystem.update();
 }
