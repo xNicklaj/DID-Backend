@@ -5,6 +5,7 @@
 #include <DtmfDecoder.h>
 #include <SoundListener.h>
 #include <VUMeter.h>
+#include <EQMeter.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -12,6 +13,7 @@ CommandDispatcher commandSystem;
 DTMFDecoder dtmfSystem;
 SoundListener listener;
 VUMeter vuMeter;
+EQMeter eqMeter;
 
 // --- Hardware/State Variables ---
 
@@ -51,11 +53,14 @@ void setup() {
   // 1. Setup Workers
   listener.setup();
   vuMeter.setup();
+  eqMeter.setup();
   vuMeter.setListener(&listener);
+  eqMeter.setListener(&listener);
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  workerSystem.addWorker(&vuMeter, 100);
+  //workerSystem.addWorker(&vuMeter, 50);
+  workerSystem.addWorker(&eqMeter, 50);
 
 
   // 2. Setup Commands
