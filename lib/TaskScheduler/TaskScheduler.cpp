@@ -37,8 +37,12 @@ void TaskScheduler::update() {
             current->lastRun = currentMillis;
             if (current->type == TaskNode::FUNC) {
                 if (current->handler.func) current->handler.func();
+                // If interval == 0, run as fast as possible but yield
+                // to allow other system/background tasks to run.
+                if (current->interval == 0) yield();
             } else { // CLASS
                 if (current->handler.worker) current->handler.worker->update();
+                if (current->interval == 0) yield();
             }
         }
         current = current->next;
