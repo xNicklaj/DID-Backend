@@ -5,6 +5,8 @@
 #include <DtmfDecoder.h>
 #include <SoundListener.h>
 #include <VUMeter.h>
+#include <WiFi_Connector.h>
+#include <RTDBListener.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -12,6 +14,8 @@ CommandDispatcher commandSystem;
 DTMFDecoder dtmfSystem;
 SoundListener listener;
 VUMeter vuMeter;
+WiFi_Connector wifiConnector;
+RTDBListener rtdbListener;
 
 // --- Hardware/State Variables ---
 
@@ -26,7 +30,6 @@ void dtmfWorker(){
 
   if(!commandSystem.execute(dtmfSystem.getSequence(), "")) return;
   dtmfSystem.clearSequence();
-  
 }
 
 // ==========================================
@@ -56,6 +59,8 @@ void setup() {
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
   workerSystem.addWorker(&vuMeter, 100);
+  workerSystem.addWorker(&wifiConnector, 5000);
+  workerSystem.addWorker(&rtdbListener, 1000);
 
 
   // 2. Setup Commands
