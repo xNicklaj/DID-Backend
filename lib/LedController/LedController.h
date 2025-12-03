@@ -11,13 +11,17 @@ class LedController {
 public:
 	static LedController& getInstance();
 
-	void begin();
-	void setPixelColor(uint16_t idx, uint32_t color);
+	void setup();
+	void setAllPixelsColor(uint32_t color);
+	void setPixelColor(uint16_t idx, uint32_t color, bool show = false);
 	void clear();
 	void show();
 
 	uint32_t Color(uint8_t r, uint8_t g, uint8_t b) { return strip.Color(r, g, b); }
 	uint16_t numPixels() const { return nPixels; }
+
+	void setBrightness(float b);
+	float getBrightness() const;
 
 private:
 	LedController();
@@ -25,6 +29,7 @@ private:
 	LedController& operator=(const LedController&) = delete;
 
 	Adafruit_NeoPixel strip;
+	float brightness = 1.0f;
 };
 
 #endif

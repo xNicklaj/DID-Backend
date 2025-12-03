@@ -16,14 +16,46 @@ void RTDBListener::setup() {
 
 void RTDBListener::update() {
     if (!initialized) return;
-    // Placeholder update loop; real implementation should poll or handle callbacks
-    Serial.println("Checking for updates in RTDB...");
+
+    if(Firebase.getBool(data, "/led/enabled")){
+        bool enabled = data.boolData();
+        if(!enabled){
+            LedController::getInstance().clear();
+            return;
+        }
+    }
+
     if(Firebase.getString(data, "/led/color")){
         String color = data.stringData();
-        Serial.println(color);
-        if(color.compareTo("red") == 0) LedController::getInstance().setPixelColor(5, LedController::getInstance().Color(255, 0, 0));
-        else if(color.compareTo("green") == 0) LedController::getInstance().setPixelColor(0, LedController::getInstance().Color(0, 255, 0));
-        else if(color.compareTo("blue") == 0) LedController::getInstance().setPixelColor(0, LedController::getInstance().Color(0, 0, 255));
-        else LedController::getInstance().setPixelColor(0, 0);
+        color.trim();
+
+        // Accept formats: "#RRGGBB", "RRGGBB", "0xRRGGBB"
+        String s = color;
+        if (s.startsWith("#")) s = s.substring(1);
+        if (s.startsWith("0x") || s.startsWith("0X")) s = s.substring(2);
+
+        if (s.length() == 6) {
+            // parse hex
+            long val = strtol(s.c_str(), NULL, 16);
+            uint8_t r = (val >> 16) & 0xFF;
+            uint8_t g = (val >> 8) & 0xFF;
+            uint8_t b = val & 0xFF;
+            LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(r, g, b));
+        } else {
+            // fallback to named colors (case-insensitive)
+            String lc = color;
+            lc.toLowerCase();
+            if(lc == "red") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(255, 0, 0));
+            else if(lc == "green") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(0, 255, 0));
+            else if(lc == "blue") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(0, 0, 255));
+            else LedController::getInstance().setAllPixelsColor(0);
+        }
+    }
+
+    if(Firebase.getFloat(data, "/led/brightness")){
+        float brightness = data.floatData();
+        brightness = constrain(brightness, 0.0, 1.0);
+        uint8_t bri = static_cast<uint8_t>(brightness * 255);
+        LedController::getInstance().setBrightness(bri);
     }
 }

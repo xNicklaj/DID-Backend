@@ -4,7 +4,6 @@
 #include <CommandDispatcher.h>
 #include <DtmfDecoder.h>
 #include <SoundListener.h>
-#include <VUMeter.h>
 #include <WiFi_Connector.h>
 #include <RTDBListener.h>
 #include <LedController.h>
@@ -14,7 +13,6 @@ TaskScheduler workerSystem;
 CommandDispatcher commandSystem;
 DTMFDecoder dtmfSystem;
 SoundListener listener;
-VUMeter vuMeter;
 WiFi_Connector wifiConnector;
 RTDBListener rtdbListener;
 
@@ -52,16 +50,13 @@ void open(String args){
 void setup() {
   Serial.begin(115200);
 
-  LedController::getInstance().begin();
+  LedController::getInstance().setup();
   
   // 1. Setup Workers
   listener.setup();
-  vuMeter.setup();
-  vuMeter.setListener(&listener);
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  //workerSystem.addWorker(&vuMeter, 100);
   workerSystem.addWorker(&wifiConnector, 5000);
   workerSystem.addWorker(&rtdbListener, 1000);
 

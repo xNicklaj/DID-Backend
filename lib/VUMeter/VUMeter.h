@@ -4,14 +4,10 @@
 #include <Arduino.h>
 #include <Worker.h>
 #include <SoundListener.h>
-#include <Adafruit_NeoPixel.h>
+#include <LedController.h>
+
 
 #define SOUND_LEVEL_CAP 8000
-
-const uint16_t kPixels = 8;
-const uint8_t  kPin    = 13; // CHECK YOUR CONNECTIONS !!!
-
-extern Adafruit_NeoPixel ledStrip;
 
 class VUMeter : public Worker {
 private:
