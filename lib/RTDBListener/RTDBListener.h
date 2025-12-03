@@ -5,6 +5,7 @@
 #include <Worker.h>
 #include <FirebaseESP32.h>
 #include <WiFiClientSecure.h>
+#include <LedController.h>
 
 #define DATABASE_URL "did-lab7-37dfa-default-rtdb.europe-west1.firebasedatabase.app/"
 

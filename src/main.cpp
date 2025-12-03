@@ -7,6 +7,7 @@
 #include <VUMeter.h>
 #include <WiFi_Connector.h>
 #include <RTDBListener.h>
+#include <LedController.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -50,6 +51,8 @@ void open(String args){
 
 void setup() {
   Serial.begin(115200);
+
+  LedController::getInstance().begin();
   
   // 1. Setup Workers
   listener.setup();
@@ -58,7 +61,7 @@ void setup() {
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  workerSystem.addWorker(&vuMeter, 100);
+  //workerSystem.addWorker(&vuMeter, 100);
   workerSystem.addWorker(&wifiConnector, 5000);
   workerSystem.addWorker(&rtdbListener, 1000);
 

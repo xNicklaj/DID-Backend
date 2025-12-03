@@ -3,7 +3,7 @@
 
 // Allow overriding these values via build flags (e.g. -D WIFI_PW=\"pass\" -D WIFI_SSID=\"polito\")
 #ifndef WIFI_SSID
-#define WIFI_SSID "iPhone di Baolo"
+#define WIFI_SSID ""
 #endif
 
 #ifndef WIFI_PW
