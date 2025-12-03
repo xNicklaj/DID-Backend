@@ -4,18 +4,17 @@ RTDBListener::RTDBListener() {
 }
 
 void RTDBListener::setup() {
-    init();
-
-    config.host = DATABASE_URL;
-    config.signer.tokens.legacy_token = DATABASE_API_KEY;
-    Firebase.begin(&config, &auth);
-    Firebase.reconnectWiFi(true);
-    Serial.println("Connesso a Firebase RTDB");
-    initialized = true;
+    // Defer full Firebase initialization until WiFi connector is provided and connected.
+    initialized = false;
+    tryInit();
 }
 
 void RTDBListener::update() {
-    if (!initialized) return;
+    // If not yet initialized, try to init (non-blocking) and skip update until ready
+    if (!initialized) {
+        tryInit();
+        return;
+    }
 
     if(Firebase.getBool(data, "/led/enabled")){
         bool enabled = data.boolData();
@@ -55,7 +54,35 @@ void RTDBListener::update() {
     if(Firebase.getFloat(data, "/led/brightness")){
         float brightness = data.floatData();
         brightness = constrain(brightness, 0.0, 1.0);
-        uint8_t bri = static_cast<uint8_t>(brightness * 255);
-        LedController::getInstance().setBrightness(bri);
+        LedController::getInstance().setBrightness(brightness);
     }
+
+    
+}
+
+void RTDBListener::setWiFiConnector(WiFi_Connector* wifiConnector) {
+    wifi = wifiConnector;
+    // Try initializing immediately when the connector is assigned
+    tryInit();
+}
+
+void RTDBListener::tryInit() {
+    if (initialized) return;
+    if (wifi == nullptr) {
+        // waiting for wifi connector to be provided
+        return;
+    }
+    if (!wifi->isConnected()) {
+        // waiting for wifi connection
+        return;
+    }
+
+    // perform Firebase initialization now that WiFi is ready
+    init();
+    config.host = DATABASE_URL;
+    config.signer.tokens.legacy_token = DATABASE_API_KEY;
+    Firebase.begin(&config, &auth);
+    Firebase.reconnectWiFi(true);
+    Serial.println("Connesso a Firebase RTDB");
+    initialized = true;
 }

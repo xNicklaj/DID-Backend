@@ -6,7 +6,6 @@
 #include <SoundListener.h>
 #include <WiFi_Connector.h>
 #include <RTDBListener.h>
-#include <LedController.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -53,11 +52,11 @@ void setup() {
   LedController::getInstance().setup();
   
   // 1. Setup Workers
-  listener.setup();
+  rtdbListener.setWiFiConnector(&wifiConnector);
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  workerSystem.addWorker(&wifiConnector, 5000);
+  workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbListener, 1000);
 
 

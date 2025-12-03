@@ -14,6 +14,9 @@ struct TaskNode {
     enum Type { FUNC, CLASS } type;
     unsigned long interval;
     unsigned long lastRun;
+    // If scheduled, startAt holds the absolute millis() when the worker loop should begin
+    unsigned long startAt;
+    bool scheduled;
     TaskNode* next;
     union {
         TaskCallback func;
@@ -32,8 +35,11 @@ public:
     void addWorker(TaskCallback func, unsigned long intervalMs);
 
     // API: Add a Worker-derived object. `setup()` will be called immediately
-    // when the worker is registered; `execute()` will be called each interval.
+    // when the worker is registered; `update()` will be called each interval.
+    // This overload schedules the worker loop to begin after `startDelayMs` milliseconds
+    // (non-blocking). If `startDelayMs` == 0 the loop may begin immediately.
     void addWorker(Worker* worker, unsigned long intervalMs);
+    void addWorker(Worker* worker, unsigned long intervalMs, unsigned long startDelayMs);
 
     // API: Call this in the main loop to keep workers running
     void update();

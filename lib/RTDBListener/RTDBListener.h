@@ -6,6 +6,7 @@
 #include <FirebaseESP32.h>
 #include <WiFiClientSecure.h>
 #include <LedController.h>
+#include <WiFi_Connector.h>
 
 #define DATABASE_URL "did-lab7-37dfa-default-rtdb.europe-west1.firebasedatabase.app/"
 
@@ -18,9 +19,11 @@ public:
     RTDBListener();
     void setup() override;
     void update() override;
+    void setWiFiConnector(WiFi_Connector* wifiConnector);
 private:
     bool initialized = false;
-
+    WiFi_Connector* wifi;
+    void tryInit();
     FirebaseData data;
     FirebaseAuth auth;
     FirebaseConfig config;

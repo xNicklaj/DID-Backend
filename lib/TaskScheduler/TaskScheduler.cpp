@@ -21,10 +21,38 @@ void TaskScheduler::addWorker(Worker* worker, unsigned long intervalMs) {
     newNode->handler.worker = worker;
     newNode->interval = intervalMs;
     newNode->lastRun = 0;
+    newNode->startAt = 0;
+    newNode->scheduled = false;
     newNode->next = head;
     head = newNode;
 
     // Call the worker's setup immediately upon registration
+    worker->setup();
+}
+
+// Add with a non-blocking start delay. `setup()` is called immediately, but
+// `update()` calls will not start until after `startDelayMs` milliseconds.
+void TaskScheduler::addWorker(Worker* worker, unsigned long intervalMs, unsigned long startDelayMs) {
+    if (worker == nullptr) return;
+    TaskNode* newNode = new TaskNode;
+    newNode->type = TaskNode::CLASS;
+    newNode->handler.worker = worker;
+    newNode->interval = intervalMs;
+    newNode->lastRun = 0;
+    newNode->next = head;
+    head = newNode;
+
+    // mark scheduling start
+    unsigned long now = millis();
+    if (startDelayMs == 0) {
+        newNode->startAt = 0;
+        newNode->scheduled = false;
+    } else {
+        newNode->startAt = now + startDelayMs;
+        newNode->scheduled = true;
+    }
+
+    // Call setup immediately regardless of scheduled start
     worker->setup();
 }
 
@@ -33,16 +61,30 @@ void TaskScheduler::update() {
     TaskNode* current = head;
     
     while (current != nullptr) {
-        if (currentMillis - current->lastRun >= current->interval) {
-            current->lastRun = currentMillis;
-            if (current->type == TaskNode::FUNC) {
+        if (current->type == TaskNode::FUNC) {
+            if (currentMillis - current->lastRun >= current->interval) {
+                current->lastRun = currentMillis;
                 if (current->handler.func) current->handler.func();
-                // If interval == 0, run as fast as possible but yield
-                // to allow other system/background tasks to run.
                 if (current->interval == 0) yield();
-            } else { // CLASS
-                if (current->handler.worker) current->handler.worker->update();
-                if (current->interval == 0) yield();
+            }
+        } else { // CLASS
+            Worker* w = current->handler.worker;
+            if (w && w->isEnabled()) {
+                // If scheduled to start in the future, wait until startAt
+                if (current->scheduled) {
+                    if (currentMillis >= current->startAt) {
+                        // start now: run first update and clear scheduled flag
+                        current->scheduled = false;
+                        current->lastRun = currentMillis;
+                        w->update();
+                    }
+                } else {
+                    if (currentMillis - current->lastRun >= current->interval) {
+                        current->lastRun = currentMillis;
+                        w->update();
+                        if (current->interval == 0) yield();
+                    }
+                }
             }
         }
         current = current->next;
