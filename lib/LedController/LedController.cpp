@@ -12,7 +12,7 @@ LedController::LedController()
 
 void LedController::setup() {
 	strip.begin();
-	strip.show();
+	show();
 }
 
 void LedController::setPixelColor(uint16_t idx, uint32_t color, bool show) {
@@ -34,23 +34,24 @@ void LedController::setPixelColor(uint16_t idx, uint32_t color, bool show) {
 		}
 	}
 	if (show)
-		strip.show();
+		this->show();
 }
 
 void LedController::setAllPixelsColor(uint32_t color) {
 	for (uint16_t i = 0; i < nPixels; ++i) 
 		LedController::getInstance().setPixelColor(i, color);
-	strip.show();
+	show();
 }
 
 void LedController::clear() {
 	for (uint16_t i = 0; i < nPixels; ++i) 
 		LedController::getInstance().setPixelColor(i, 0);
-	strip.show();
+	show();
 }
 
 void LedController::show() {
-	
+	strip.setBrightness(255*brightness);
+	strip.show();
 }
 
 void LedController::setBrightness(float b) {

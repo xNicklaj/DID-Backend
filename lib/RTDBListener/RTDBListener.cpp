@@ -56,8 +56,6 @@ void RTDBListener::update() {
         brightness = constrain(brightness, 0.0, 1.0);
         LedController::getInstance().setBrightness(brightness);
     }
-
-    
 }
 
 void RTDBListener::setWiFiConnector(WiFi_Connector* wifiConnector) {
