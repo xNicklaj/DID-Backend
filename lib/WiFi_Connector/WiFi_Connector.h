@@ -3,6 +3,9 @@
 
 #include <Worker.h>
 #include <WiFi.h>
+#ifdef WIFI_USE_PEAP
+#include <esp_wpa2.h>
+#endif
 
 class WiFi_Connector : public Worker{
 private:

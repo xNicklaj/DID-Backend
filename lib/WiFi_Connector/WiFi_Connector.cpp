@@ -2,7 +2,6 @@
 
 #include <string.h>
 
-// Allow overriding these values via build flags (e.g. -D WIFI_PW=\"pass\" -D WIFI_SSID=\"polito\")
 #ifndef WIFI_SSID
 #define WIFI_SSID ""
 #endif
@@ -11,20 +10,32 @@
 #define WIFI_PW ""
 #endif
 
-/* #ifndef WIFI_EAP_USERNAME
+#ifndef WIFI_EAP_USERNAME
 #define WIFI_EAP_USERNAME "sXXXXXX@studenti.polito.it"
 #endif
 
 #ifndef WIFI_EAP_ID
 #define WIFI_EAP_ID "sXXXXXX@studenti.polito.it"
-#endif */
+#endif
 
 void WiFi_Connector::setup(){
+    WiFi.disconnect(true);
     WiFi.mode(WIFI_STA);
 
-    // Start a non-blocking connection attempt
     Serial.printf("Connecting to WiFi '%s'\n", WIFI_SSID);
+    #ifdef WIFI_USE_PEAP
+    const char* username = WIFI_EAP_USERNAME;
+    const char* id = WIFI_EAP_ID;
+    const char* pw = WIFI_PW;
+
+    esp_wifi_sta_wpa2_ent_enable();
+    esp_wifi_sta_wpa2_ent_set_identity((uint8_t*)username, strlen(username));
+    esp_wifi_sta_wpa2_ent_set_username((uint8_t*)id, strlen(id));
+    esp_wifi_sta_wpa2_ent_set_password((uint8_t*)pw, strlen(pw));
+    WiFi.begin(WIFI_SSID);
+    #else
     WiFi.begin(WIFI_SSID, WIFI_PW);
+    #endif
     state = CONNECTING;
     connectStart = millis();
 }

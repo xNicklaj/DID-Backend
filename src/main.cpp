@@ -57,7 +57,7 @@ void setup() {
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
   workerSystem.addWorker(&wifiConnector, 500);
-  workerSystem.addWorker(&rtdbListener, 1000);
+  workerSystem.addWorker(&rtdbListener, 500);
 
 
   // 2. Setup Commands
