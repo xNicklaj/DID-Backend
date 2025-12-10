@@ -20,6 +20,7 @@ public:
     void setup() override;
     void update() override;
     void setWiFiConnector(WiFi_Connector* wifiConnector);
+    void pushString(const String& path, const String& value);
 private:
     bool initialized = false;
     WiFi_Connector* wifi;

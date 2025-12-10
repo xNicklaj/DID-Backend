@@ -84,3 +84,8 @@ void RTDBListener::tryInit() {
     Serial.println("Connesso a Firebase RTDB");
     initialized = true;
 }
+
+void RTDBListener::pushString(const String& path, const String& value) {
+    if (!initialized) return;
+    Firebase.pushString(data, path.c_str(), value);
+}

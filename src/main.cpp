@@ -6,6 +6,7 @@
 #include <SoundListener.h>
 #include <WiFi_Connector.h>
 #include <RTDBListener.h>
+#include <CodeWorker.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -14,6 +15,7 @@ DTMFDecoder dtmfSystem;
 SoundListener listener;
 WiFi_Connector wifiConnector;
 RTDBListener rtdbListener;
+CodeWorker codeWorker;
 
 // --- Hardware/State Variables ---
 
@@ -53,12 +55,14 @@ void setup() {
   
   // 1. Setup Workers
   rtdbListener.setWiFiConnector(&wifiConnector);
+  codeWorker.setDecoder(&dtmfSystem);
+  codeWorker.setRTDBListener(&rtdbListener);
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
   workerSystem.addWorker(&wifiConnector, 500);
-  workerSystem.addWorker(&rtdbListener, 500);
-
+  workerSystem.addWorker(&rtdbListener, 50);
+  workerSystem.addWorker(&codeWorker, 50);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
