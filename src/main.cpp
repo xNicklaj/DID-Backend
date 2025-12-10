@@ -7,6 +7,7 @@
 #include <WiFi_Connector.h>
 #include <RTDBListener.h>
 #include <CodeWorker.h>
+#include <ServoController.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -16,6 +17,7 @@ SoundListener listener;
 WiFi_Connector wifiConnector;
 RTDBListener rtdbListener;
 CodeWorker codeWorker;
+ServoController servoController;
 
 // --- Hardware/State Variables ---
 
@@ -63,6 +65,7 @@ void setup() {
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbListener, 50);
   workerSystem.addWorker(&codeWorker, 50);
+  workerSystem.addWorker(&servoController, 200);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
