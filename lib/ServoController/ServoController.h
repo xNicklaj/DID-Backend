@@ -7,14 +7,21 @@
 
 #define SERVO_PIN 12
 
-class ServoController : public Worker {
+class ServoController {
 private:
     Servo servo;
     int currentPos = 0;
+    int pin = SERVO_PIN;
 public:
-    void setup() override;
-    void update() override;
-    void setAngle(int angle);
+    /// @brief Returns the pin number if the servo is attached, -1 otherwise
+    /// @return 
+    int getPin();
+    void setup(int pin = SERVO_PIN);
+    /// @brief Sets the servo to the specified angle (0-180)
+    /// @param angle
+    void setAngle(int angle, int degreesPerSecond = 90);
+    /// @brief Gets the current angle of the servo
+    /// @return Current angle (0-180)
     int getAngle() const { return currentPos; }
 };
 

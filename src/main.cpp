@@ -8,6 +8,8 @@
 #include <RTDBListener.h>
 #include <CodeWorker.h>
 #include <ServoController.h>
+#include <DoorController.h>
+#include <DistanceReader.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -17,7 +19,8 @@ SoundListener listener;
 WiFi_Connector wifiConnector;
 RTDBListener rtdbListener;
 CodeWorker codeWorker;
-ServoController servoController;
+DoorController doorController;
+DistanceReader distanceReaderObj(26, 35);
 
 // --- Hardware/State Variables ---
 
@@ -32,6 +35,15 @@ void dtmfWorker(){
 
   if(!commandSystem.execute(dtmfSystem.getSequence(), "")) return;
   dtmfSystem.clearSequence();
+}
+
+void doorWorker(){
+  doorController.OpenDoor();
+}
+
+void distanceReader(){
+  long distance = distanceReaderObj.read();
+  Serial.printf("Distance: %ld cm\n", distance);
 }
 
 // ==========================================
@@ -54,6 +66,7 @@ void setup() {
   Serial.begin(115200);
 
   LedController::getInstance().setup();
+  doorController.init(12, 4000); // Pin 12, 4 seconds open time
   
   // 1. Setup Workers
   rtdbListener.setWiFiConnector(&wifiConnector);
@@ -65,7 +78,9 @@ void setup() {
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbListener, 50);
   workerSystem.addWorker(&codeWorker, 50);
-  workerSystem.addWorker(&servoController, 200);
+  workerSystem.addWorker(&doorController, 500);
+  workerSystem.addWorker(doorWorker, 20000);
+  workerSystem.addWorker(distanceReader, 1000);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
