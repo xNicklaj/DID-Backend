@@ -35,6 +35,8 @@ private:
     // Helper to push new key into history (Shift Left)
     void addToSequence(char key);
 
+    void Debug(int32_t* buff, int buffSize);
+
 public:
     DTMFDecoder();
 

@@ -32,14 +32,12 @@ void VUMeter::update(){
 
     float rms = sqrt(level);
 
+    //Serial.printf("VUMeter RMS Level: %.2f\n", rms);
+
     int ledLvl = constrain(rms / SOUND_LEVEL_CAP * LedController::getInstance().numPixels(), 0, LedController::getInstance().numPixels());
+    //Serial.printf("Led Level: %d\n", ledLvl);
     for (uint16_t i = 0; i < LedController::getInstance().numPixels(); i++){
-        if(ledLvl == 0)
-            LedController::getInstance().setPixelColor(i, 0);
-        else if(ledLvl > 5)
-            LedController::getInstance().setPixelColor(i, LedController::getInstance().Color(150, 0, 0));
-        else if(ledLvl > 3)
-            LedController::getInstance().setPixelColor(i, LedController::getInstance().Color(150, 150, 0));
+        LedController::getInstance().setPixelColor(i, i >= ledLvl ? 0 : (i > 5 ? LedController::getInstance().Color(150, 0, 0) : (i > 3 ? LedController::getInstance().Color(150, 150, 0) : LedController::getInstance().Color(0, 150, 0))));
     }
     LedController::getInstance().show();
 }

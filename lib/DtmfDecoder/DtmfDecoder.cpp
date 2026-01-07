@@ -39,6 +39,8 @@ void DTMFDecoder::addToSequence(char key) {
 }
 
 char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
+    //Debug(buff, buffSize);
+
     int maxRowIndex = -1;
     int maxColIndex = -1;
     float maxRowMag = 0;
@@ -91,4 +93,12 @@ String DTMFDecoder::getSequence() {
 void DTMFDecoder::clearSequence() {
     memset(sequence, 0, SEQ_SIZE);
     lastDecodedKey = 0;
+}
+
+void DTMFDecoder::Debug(int32_t* buff, int buffSize) {
+    int nonzero = 0;
+    for(int i = 0; i < buffSize; i++) {
+        nonzero++;
+    }
+    Serial.printf("Buffer Non-Zero Samples: %d\n", nonzero);
 }

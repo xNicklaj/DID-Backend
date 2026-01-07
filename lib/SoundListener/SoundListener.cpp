@@ -19,8 +19,8 @@ void SoundListener::setup(){
     };
 
     const i2s_pin_config_t pins = {
-        .bck_io_num = 36,
-        .ws_io_num = 39,
+        .bck_io_num = 33,
+        .ws_io_num = 25,
         .data_out_num = -1,
         .data_in_num = 32
     };

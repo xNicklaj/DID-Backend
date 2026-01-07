@@ -10,6 +10,7 @@
 #include <ServoController.h>
 #include <DoorController.h>
 #include <DistanceReader.h>
+#include <VUMeter.h>
 
 // --- Global System Objects ---
 TaskScheduler workerSystem;
@@ -21,6 +22,7 @@ RTDBListener rtdbListener;
 CodeWorker codeWorker;
 DoorController doorController;
 DistanceReader distanceReaderObj(26, 35);
+VUMeter vuMeter;
 
 // --- Hardware/State Variables ---
 
@@ -67,20 +69,23 @@ void setup() {
 
   LedController::getInstance().setup();
   doorController.init(12, 4000); // Pin 12, 4 seconds open time
+
+  vuMeter.setListener(&listener);
   
   // 1. Setup Workers
-  rtdbListener.setWiFiConnector(&wifiConnector);
+  //rtdbListener.setWiFiConnector(&wifiConnector);
   codeWorker.setDecoder(&dtmfSystem);
   codeWorker.setRTDBListener(&rtdbListener);
 
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  workerSystem.addWorker(&wifiConnector, 500);
-  workerSystem.addWorker(&rtdbListener, 50);
+  //workerSystem.addWorker(&wifiConnector, 500);
+  //workerSystem.addWorker(&rtdbListener, 50);
   workerSystem.addWorker(&codeWorker, 50);
-  workerSystem.addWorker(&doorController, 500);
-  workerSystem.addWorker(doorWorker, 20000);
-  workerSystem.addWorker(distanceReader, 1000);
+  workerSystem.addWorker(&vuMeter, 200);
+  //workerSystem.addWorker(&doorController, 500);
+  //workerSystem.addWorker(doorWorker, 20000);
+  //workerSystem.addWorker(distanceReader, 1000);
 
   // 2. Setup Commands
   commandSystem.registerCommand("*123#", pair);
