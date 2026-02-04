@@ -41,6 +41,11 @@ public:
     /// @param outValue Output parameter to receive the value.
     /// @return True if the value was read successfully.
     bool getBool(const String& path, bool& outValue);
+    /// @brief Get an integer value from the given RTDB path.
+    /// @param path RTDB path.
+    /// @param outValue Output parameter to receive the value.
+    /// @return True if the value was read successfully.
+    bool getInt(const String& path, int& outValue);
 private:
     bool initialized = false;
     WiFi_Connector* wifi;

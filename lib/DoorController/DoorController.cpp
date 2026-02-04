@@ -36,6 +36,11 @@ DistanceState DoorController::getDistanceState(){
     return DistanceState::NOT_DETECTED;
 }
 
+void DoorController::setOpenDuration(int openDurationMs){
+    if (openDurationMs <= 0) return;
+    openTime = openDurationMs;
+}
+
 void DoorController::setRtdb(RTDBConnector* connector){
     rtdb = connector;
 }

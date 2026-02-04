@@ -37,16 +37,32 @@ void dtmfWorker(){
   dtmfSystem.clearSequence();
 }
 
+void timerDurationWorker(){
+  static int lastDurationMs = -1;
+  int durationMs = 0;
+
+  if(!rtdbConnector.getInt("/timerDuration", durationMs)) return;
+  if(durationMs <= 0) return;
+  if(durationMs == lastDurationMs) return;
+
+  lastDurationMs = durationMs;
+  doorController[0]->setOpenDuration(durationMs);
+  doorController[1]->setOpenDuration(durationMs);
+  Serial.printf("Updated timerDuration: %d ms\n", durationMs);
+}
+
 // ==========================================
 // COMMANDS (DTMF Actions)
 // ==========================================
 
-void pair(String args){
-  Serial.println("PAIRED");
-}
-
 void open(String args){
   Serial.printf("OPENED %s\n", args.c_str());
+  if(args.c_str()[0]){
+    int doorId = args.c_str()[0] - '0';
+    if(doorId >=0 && doorId < 2){
+      doorController[doorId]->OpenDoor();
+    }
+  }
 }
 
 // ==========================================
@@ -68,6 +84,7 @@ void setup() {
   codeWorker.setRTDBConnector(&rtdbConnector);
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
+  workerSystem.addWorker(timerDurationWorker, 1000);
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbConnector, 50);
   workerSystem.addWorker(&codeWorker, 50);

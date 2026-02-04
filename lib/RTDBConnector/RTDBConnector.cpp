@@ -101,3 +101,10 @@ bool RTDBConnector::getBool(const String& path, bool& outValue) {
     outValue = data.boolData();
     return true;
 }
+
+bool RTDBConnector::getInt(const String& path, int& outValue) {
+    if (!initialized) return false;
+    if (!Firebase.getInt(data, path.c_str())) return false;
+    outValue = data.intData();
+    return true;
+}

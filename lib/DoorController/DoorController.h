@@ -65,6 +65,9 @@ class DoorController : public Worker {
         /// @return Detection state.
         DistanceState getDistanceState();
 
+        /// @brief Set the door open duration (milliseconds).
+        void setOpenDuration(int openDurationMs);
+
         /// @brief Called by the scheduler to initialize the worker state.
         void setup() override;
         /// @brief Called by the scheduler to update the worker state.
