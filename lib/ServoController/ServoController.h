@@ -17,6 +17,9 @@ private:
     /// @return Clamped angle in degrees.
     int clampAngle(int angle) const;
 public:
+    /// @brief Construct and attach the servo to the provided pin.
+    /// @param pin GPIO pin to attach the servo to.
+    ServoController(int pin = SERVO_PIN);
     /// @brief Returns the pin number if the servo is attached, -1 otherwise
     /// @return 
     int getPin();

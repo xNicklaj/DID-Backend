@@ -2,6 +2,7 @@
 #define DOOR_CONTROLLER_H
 
 #include <ServoController.h>
+#include <RTDBConnector.h>
 #include <DistanceReader.h>
 
 #define CLOSED_ANGLE 0
@@ -21,26 +22,34 @@ enum class DistanceState{
 
 class DoorController : public Worker {
     private:
-        ServoController servoController;
-        DistanceReader distanceReader;
+        ServoController* servoController;
+        DistanceReader* distanceReader;
+        RTDBConnector* rtdb;
         /// @brief Time the door remains open
         int openTime = 1000; // milliseconds
         int timer = 0;
         int lastUpdateTime = 0;
+        int id = 0;
+        void syncState();
+        void setDirty();
     public:
         /// @brief Construct a DoorController and initialize its pins.
+        /// @param doorId External ID of the door.
         /// @param doorPin Servo pin used for the door.
         /// @param triggerPin Trigger pin for the distance sensor.
         /// @param echoPin Echo pin for the distance sensor.
         /// @param openDuration Duration in milliseconds to keep the door open.
-        DoorController(int doorPin, int triggerPin, int echoPin, int openDuration = 1000);
+        DoorController(int doorId, int doorPin, int triggerPin, int echoPin, int openDuration = 1000);
 
         /// @brief Initialize or re-initialize the DoorController pins and open duration.
+        /// @param doorId External ID of the door.
         /// @param pin Servo pin used for the door.
         /// @param triggerPin Trigger pin for the distance sensor.
         /// @param echoPin Echo pin for the distance sensor.
         /// @param openDuration Duration in milliseconds to keep the door open.
-        void init(int pin, int triggerPin, int echoPin, int openDuration = 1000);
+        void init(int doorId, int pin, int triggerPin, int echoPin, int openDuration = 1000);
+
+        void setRtdb(RTDBConnector* connector);
 
         /// @brief Opens the door for the configured duration. After said duration, closes the door.
         void OpenDoor();

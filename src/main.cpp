@@ -20,7 +20,7 @@ SoundListener listener;
 WiFi_Connector wifiConnector;
 RTDBConnector rtdbConnector;
 CodeWorker codeWorker;
-DoorController doorController[2];
+DoorController* doorController[2];
 
 // --- Hardware/State Variables ---
 
@@ -58,10 +58,8 @@ void setup() {
 
   LedController::getInstance().setup();
 
-  DoorController door1(13, 12, 35, 30000);
-  DoorController door2(27, 25, 34, 30000);
-  doorController[0] = door1;
-  doorController[1] = door2;
+  doorController[0] = new DoorController(0, 13, 12, 35, 30000);
+  doorController[1] = new DoorController(1, 27, 25, 34, 30000);
   
   // 1. Setup Workers
   rtdbConnector.setWiFiConnector(&wifiConnector);
@@ -73,8 +71,8 @@ void setup() {
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbConnector, 50);
   workerSystem.addWorker(&codeWorker, 50);
-  workerSystem.addWorker(&doorController[0], 50);
-  workerSystem.addWorker(&doorController[1], 50);
+  workerSystem.addWorker(doorController[0], 50);
+  workerSystem.addWorker(doorController[1], 50);
 
 
   // 2. Setup Commands

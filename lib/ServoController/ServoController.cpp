@@ -1,5 +1,9 @@
 #include <ServoController.h>
 
+ServoController::ServoController(int pin){
+    setup(pin);
+}
+
 int ServoController::clampAngle(int angle) const {
     return constrain(angle, 0, 180);
 }
