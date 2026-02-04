@@ -1,6 +1,10 @@
 #include <DistanceReader.h>
 
-DistanceReader::DistanceReader(int triggerPin, int echoPin){// Max distance 400cm
+DistanceReader::DistanceReader(int triggerPin, int echoPin) {
+    setup(triggerPin, echoPin);
+}
+
+void DistanceReader::setup(int triggerPin, int echoPin) {
     this->triggerPin = triggerPin;
     this->echoPin = echoPin;
 
@@ -8,19 +12,15 @@ DistanceReader::DistanceReader(int triggerPin, int echoPin){// Max distance 400c
     pinMode(this->echoPin, INPUT);
 }
 
-/// @brief Read distance in cm
-/// @return 
 long DistanceReader::read() {
-    float duration, distance;  
+    digitalWrite(triggerPin, LOW);
+    delayMicroseconds(2);
+    digitalWrite(triggerPin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(triggerPin, LOW);
 
-    digitalWrite(triggerPin, LOW);  
-	delayMicroseconds(2);  
-	digitalWrite(triggerPin, HIGH);  
-	delayMicroseconds(10);  
-	digitalWrite(triggerPin, LOW);
-
-    duration = pulseIn(echoPin, HIGH); 
-    distance = (duration*.0343)/2;  
+    const float duration = pulseIn(echoPin, HIGH);
+    const float distance = (duration * 0.0343f) / 2.0f;
 
     return distance;
 }

@@ -1,38 +1,46 @@
 #include <DoorController.h>
 
-DoorController::DoorController(int pin, int openDuration){
-    init(pin, openDuration);
+DoorController::DoorController(int pin, int triggerPin, int echoPin, int openDuration){
+    init(pin, triggerPin, echoPin, openDuration);
 }
 
-void DoorController::init(int pin, int openDuration){
+void DoorController::init(int pin, int triggerPin, int echoPin, int openDuration){
     servoController.setup(pin);
+    distanceReader.setup(triggerPin, echoPin);
+
     openTime = openDuration;
-    hasBeenInitialized = true;
 }
 
 void DoorController::OpenDoor(){
     Serial.printf("Standby. Opening the door on pin %d...\n", servoController.getPin());
-    servoController.setAngle(OPEN_ANGLE, 45); // Open position
+    servoController.setAngle(OPEN_ANGLE, 100); // Open position
     timer = 0;
     lastUpdateTime = millis();
 }
 
 void DoorController::CloseDoor(){
-    servoController.setAngle(CLOSED_ANGLE, 45); // Closed position
+    servoController.setAngle(CLOSED_ANGLE, 100); // Closed position
+    Serial.printf("Door closed on pin %d.\n", servoController.getPin());
+}
+
+DistanceState DoorController::getDistanceState(){
+    long distance = distanceReader.read();
+    if(distance <= DEFAULT_DISTANCE_THRESHOLD_CM){
+        return DistanceState::DETECTED;
+    }
+    return DistanceState::NOT_DETECTED;
 }
 
 void DoorController::setup(){
-    if(!hasBeenInitialized) 
-        init();
     CloseDoor();
 }
 
 void DoorController::update(){
     if(servoController.getAngle() != OPEN_ANGLE) return;
     
-    int currentTime = millis();
-    timer += (currentTime - lastUpdateTime);
-    lastUpdateTime = currentTime;
+    const unsigned long currentTime = millis();
+    timer += static_cast<int>(currentTime - static_cast<unsigned long>(lastUpdateTime));
+    lastUpdateTime = static_cast<int>(currentTime);
 
     if(timer >= openTime){
         CloseDoor();

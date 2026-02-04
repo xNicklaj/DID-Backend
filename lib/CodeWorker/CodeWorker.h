@@ -4,18 +4,18 @@
 #include <Arduino.h>
 #include <Worker.h>
 #include <DtmfDecoder.h>
-#include <RTDBListener.h>
+#include <RTDBConnector.h>
 
 class CodeWorker : public Worker {
 private:
     short int ledLvl = 0;
     DTMFDecoder* decoder;
-    RTDBListener* rtdb;
+    RTDBConnector* rtdb;
 public:
     void setup() override;
     void update() override;
     void setDecoder(DTMFDecoder* dec) { decoder = dec; };
-    void setRTDBListener(RTDBListener* rtdbListener) { rtdb = rtdbListener; }
+    void setRTDBConnector(RTDBConnector* rtdbConnector) { rtdb = rtdbConnector; }
 };
 
 #endif

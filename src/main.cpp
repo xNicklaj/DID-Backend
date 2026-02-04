@@ -5,7 +5,7 @@
 #include <DtmfDecoder.h>
 #include <SoundListener.h>
 #include <WiFi_Connector.h>
-#include <RTDBListener.h>
+#include <RTDBConnector.h>
 #include <CodeWorker.h>
 #include <ServoController.h>
 #include <DoorController.h>
@@ -18,11 +18,9 @@ CommandDispatcher commandSystem;
 DTMFDecoder dtmfSystem;
 SoundListener listener;
 WiFi_Connector wifiConnector;
-RTDBListener rtdbListener;
+RTDBConnector rtdbConnector;
 CodeWorker codeWorker;
-DoorController doorController;
-DistanceReader distanceReaderObj(26, 35);
-VUMeter vuMeter;
+DoorController doorController[2];
 
 // --- Hardware/State Variables ---
 
@@ -37,15 +35,6 @@ void dtmfWorker(){
 
   if(!commandSystem.execute(dtmfSystem.getSequence(), "")) return;
   dtmfSystem.clearSequence();
-}
-
-void doorWorker(){
-  doorController.OpenDoor();
-}
-
-void distanceReader(){
-  long distance = distanceReaderObj.read();
-  Serial.printf("Distance: %ld cm\n", distance);
 }
 
 // ==========================================
@@ -68,28 +57,28 @@ void setup() {
   Serial.begin(115200);
 
   LedController::getInstance().setup();
-  doorController.init(12, 4000); // Pin 12, 4 seconds open time
 
-  vuMeter.setListener(&listener);
+  DoorController door1(13, 12, 35, 30000);
+  DoorController door2(27, 25, 34, 30000);
+  doorController[0] = door1;
+  doorController[1] = door2;
   
   // 1. Setup Workers
-  //rtdbListener.setWiFiConnector(&wifiConnector);
-  codeWorker.setDecoder(&dtmfSystem);
-  codeWorker.setRTDBListener(&rtdbListener);
+  rtdbConnector.setWiFiConnector(&wifiConnector);
 
+  codeWorker.setDecoder(&dtmfSystem);
+  codeWorker.setRTDBConnector(&rtdbConnector);
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  //workerSystem.addWorker(&wifiConnector, 500);
-  //workerSystem.addWorker(&rtdbListener, 50);
+  workerSystem.addWorker(&wifiConnector, 500);
+  workerSystem.addWorker(&rtdbConnector, 50);
   workerSystem.addWorker(&codeWorker, 50);
-  workerSystem.addWorker(&vuMeter, 200);
-  //workerSystem.addWorker(&doorController, 500);
-  //workerSystem.addWorker(doorWorker, 20000);
-  //workerSystem.addWorker(distanceReader, 1000);
+  workerSystem.addWorker(&doorController[0], 50);
+  workerSystem.addWorker(&doorController[1], 50);
+
 
   // 2. Setup Commands
-  commandSystem.registerCommand("*123#", pair);
-  commandSystem.registerCommand("*341#", open, 1);
+  commandSystem.registerCommand("*0F39#", open, 1);
 
   Serial.println("System Ready.");
 }

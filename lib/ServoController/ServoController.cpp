@@ -1,23 +1,19 @@
 #include <ServoController.h>
 
+int ServoController::clampAngle(int angle) const {
+    return constrain(angle, 0, 180);
+}
+
 void ServoController::setAngle(int angle, int degreesPerSecond) {
-    if (angle < 0) angle = 0;
-    if (angle > 180) angle = 180;
-
-    /* if (degreesPerSecond <= 0) {
-        // Fallback to immediate move
-        setAngle(angle);
-        return;
-    } */
-
-    int start = currentPos;
+    angle = clampAngle(angle);
+    const int start = currentPos;
     if (start == angle) return;
 
-    int step = (angle > start) ? 1 : -1;
+    const int step = (angle > start) ? 1 : -1;
     unsigned long stepDelayMs = 1000UL / (unsigned long)abs(degreesPerSecond);
     if (stepDelayMs == 0) stepDelayMs = 1; // safety floor
 
-    Serial.printf("Slewing servo from %d to %d at %d dps\n", start, angle, degreesPerSecond);
+    //Serial.printf("Slewing servo from %d to %d at %d dps\n", start, angle, degreesPerSecond);
 
     for (int pos = start; pos != angle; pos += step) {
         servo.write(pos);

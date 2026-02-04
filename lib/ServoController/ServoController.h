@@ -12,10 +12,16 @@ private:
     Servo servo;
     int currentPos = 0;
     int pin = SERVO_PIN;
+    /// @brief Clamp a requested angle to the valid 0-180 range.
+    /// @param angle Requested angle in degrees.
+    /// @return Clamped angle in degrees.
+    int clampAngle(int angle) const;
 public:
     /// @brief Returns the pin number if the servo is attached, -1 otherwise
     /// @return 
     int getPin();
+    /// @brief Initialize the servo and attach it to the provided pin.
+    /// @param pin GPIO pin to attach the servo to.
     void setup(int pin = SERVO_PIN);
     /// @brief Sets the servo to the specified angle (0-180)
     /// @param angle
