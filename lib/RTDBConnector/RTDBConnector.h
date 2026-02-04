@@ -8,7 +8,9 @@
 #include <LedController.h>
 #include <WiFi_Connector.h>
 
-#define DATABASE_URL "did-lab7-37dfa-default-rtdb.europe-west1.firebasedatabase.app/"
+#ifndef DATABASE_URL
+#define DATABASE_URL "vintedgo2-7265f-default-rtdb.europe-west1.firebasedatabase.app"
+#endif
 
 #ifndef DATABASE_API_KEY
 #define DATABASE_API_KEY ""

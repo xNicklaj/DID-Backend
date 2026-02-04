@@ -22,8 +22,8 @@ enum class DistanceState{
 
 class DoorController : public Worker {
     private:
-        ServoController* servoController;
-        DistanceReader* distanceReader;
+        ServoController servoController;
+        DistanceReader distanceReader;
         RTDBConnector* rtdb;
         /// @brief Time the door remains open
         int openTime = 1000; // milliseconds

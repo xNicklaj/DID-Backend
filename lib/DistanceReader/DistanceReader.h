@@ -8,6 +8,8 @@ class DistanceReader {
         int triggerPin;
         int echoPin;
     public:
+        /// @brief Construct an uninitialized distance reader.
+        DistanceReader();
         /// @brief Construct a distance reader with the provided pins.
         /// @param triggerPin GPIO pin for the trigger signal.
         /// @param echoPin GPIO pin for the echo signal.

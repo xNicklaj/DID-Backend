@@ -1,5 +1,7 @@
 #include <DistanceReader.h>
 
+DistanceReader::DistanceReader() : triggerPin(-1), echoPin(-1) {}
+
 DistanceReader::DistanceReader(int triggerPin, int echoPin) {
     setup(triggerPin, echoPin);
 }

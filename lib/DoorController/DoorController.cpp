@@ -6,15 +6,15 @@ DoorController::DoorController(int doorId, int pin, int triggerPin, int echoPin,
 
 void DoorController::init(int doorId, int pin, int triggerPin, int echoPin, int openDuration){
     id = doorId;
-    servoController = new ServoController(pin);
-    distanceReader = new DistanceReader(triggerPin, echoPin);
+    servoController.setup(pin);
+    distanceReader.setup(triggerPin, echoPin);
 
     openTime = openDuration;
 }
 
 void DoorController::OpenDoor(){
-    Serial.printf("Standby. Opening the door on pin %d...\n", servoController->getPin());
-    servoController->setAngle(OPEN_ANGLE, 100); // Open position
+    Serial.printf("Standby. Opening the door on pin %d...\n", servoController.getPin());
+    servoController.setAngle(OPEN_ANGLE, 100); // Open position
     timer = 0;
     lastUpdateTime = millis();
 
@@ -22,14 +22,14 @@ void DoorController::OpenDoor(){
 }
 
 void DoorController::CloseDoor(){
-    servoController->setAngle(CLOSED_ANGLE, 100); // Closed position
-    Serial.printf("Door closed on pin %d.\n", servoController->getPin());
+    servoController.setAngle(CLOSED_ANGLE, 100); // Closed position
+    Serial.printf("Door closed on pin %d.\n", servoController.getPin());
 
     setDirty();
 }
 
 DistanceState DoorController::getDistanceState(){
-    long distance = distanceReader->read();
+    long distance = distanceReader.read();
     if(distance <= DEFAULT_DISTANCE_THRESHOLD_CM){
         return DistanceState::DETECTED;
     }
@@ -66,7 +66,7 @@ void DoorController::setDirty(){
 void DoorController::update(){
     syncState();
 
-    if(servoController->getAngle() != OPEN_ANGLE) return;
+    if(servoController.getAngle() != OPEN_ANGLE) return;
     
     const unsigned long currentTime = millis();
     timer += static_cast<int>(currentTime - static_cast<unsigned long>(lastUpdateTime));
@@ -79,7 +79,7 @@ void DoorController::update(){
 }
 
 DoorState DoorController::getDoorState(){
-    int angle = servoController->getAngle();
+    int angle = servoController.getAngle();
     if(angle == CLOSED_ANGLE) return DoorState::DOOR_CLOSED;
     if(angle == OPEN_ANGLE) return DoorState::DOOR_OPEN;
     return DoorState::DOOR_TRANSITIONING;
