@@ -7,7 +7,7 @@
 
 #define CLOSED_ANGLE 80
 #define OPEN_ANGLE 20
-#define DEFAULT_DISTANCE_THRESHOLD_CM 29
+#define DEFAULT_DISTANCE_THRESHOLD_CM 27
 
 enum class DoorState{
     DOOR_CLOSED,

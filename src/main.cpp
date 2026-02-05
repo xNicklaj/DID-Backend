@@ -58,6 +58,14 @@ void timerDurationWorker(){
 // ==========================================
 
 void open(String args){
+  // Check if all doors are closed before opening
+  for(int i = 0; i < 2; i++){
+    if(doorController[i] != nullptr && doorController[i]->getDoorState() != DoorState::DOOR_CLOSED){
+      Serial.println("Cannot open: not all doors are closed");
+      return;
+    }
+  }
+
   Serial.printf("OPENED %s\n", args.c_str());
   if(args.c_str()[0]){
     int doorId = args.c_str()[0] - '0';
@@ -97,7 +105,7 @@ void setup() {
   workerSystem.addWorker(&rtdbConnector, 50);
   workerSystem.addWorker(&codeWorker, 50);
   workerSystem.addWorker(doorController[0], 50);
-  //workerSystem.addWorker(doorController[1], 50);
+  workerSystem.addWorker(doorController[1], 50);
 
 
   // 2. Setup Commands

@@ -41,6 +41,11 @@ public:
     /// @param json FirebaseJson object to set.
     /// @return True if the operation succeeded.
     bool setJSON(const String& path, FirebaseJson& json);
+    /// @brief Update a JSON object at the given RTDB path (patch; leaves other keys intact).
+    /// @param path RTDB path.
+    /// @param json FirebaseJson object to update.
+    /// @return True if the operation succeeded.
+    bool updateJSON(const String& path, FirebaseJson& json);
     /// @brief Get a boolean value from the given RTDB path.
     /// @param path RTDB path.
     /// @param outValue Output parameter to receive the value.

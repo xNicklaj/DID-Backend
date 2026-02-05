@@ -50,19 +50,27 @@ void DoorController::setup(){
 }
 
 void DoorController::syncState(){
-    if (!rtdb) return; // Skip if RTDB not initialized
-    if(!rtdb->isConnected()) return;
+    if (!rtdb) {
+        Serial.println("RTDB not initialized. Cannot sync door state.");
+        // Skip if RTDB not initialized
+        return;
+    }
+    if(!rtdb->isConnected()){
+        Serial.println("RTDB not connected. Cannot sync door state.");
+        return;
+    }
     
     // Batch all updates into a single JSON update to minimize blocking time
     char path[50];
     snprintf(path, sizeof(path), "/doors/%d", id);
     
     FirebaseJson json;
-    json.set("state", getDoorState() != DoorState::DOOR_CLOSED);
+    json.set("isOpen", getDoorState() != DoorState::DOOR_CLOSED);
     json.set("hasProduct", getDistanceState() == DistanceState::DETECTED);
     json.set("isTimerRunning", timer > 0);
     
-    rtdb->setJSON(path, json);
+    rtdb->updateJSON(path, json);
+    //Serial.printf("Synced door %d state to RTDB.\n", id);
 }
 
 void DoorController::setDirty(){
@@ -70,11 +78,12 @@ void DoorController::setDirty(){
     
     char path[50];
     snprintf(path, sizeof(path), "/doors/%d/isDirty", id);
+    Serial.printf("Marking door %d as dirty in RTDB.\n", id);
     rtdb->setBool(path, true);
 }
 
 void DoorController::update(){
-    //syncState();
+    syncState();
     if(servoController.getAngle() != OPEN_ANGLE) return;
     
     const unsigned long currentTime = millis();

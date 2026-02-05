@@ -59,6 +59,11 @@ bool RTDBConnector::setJSON(const String& path, FirebaseJson& json) {
     return Firebase.setJSON(data, path.c_str(), json);
 }
 
+bool RTDBConnector::updateJSON(const String& path, FirebaseJson& json) {
+    if (!initialized) return false;
+    return Firebase.updateNode(data, path.c_str(), json);
+}
+
 bool RTDBConnector::getBool(const String& path, bool& outValue) {
     if (!initialized) return false;
     if (!Firebase.getBool(data, path.c_str())) return false;

@@ -39,7 +39,7 @@ long DistanceReader::read() {
     // Speed of sound = 343 m/s = 0.0343 cm/us
     long distance = (duration * 0.0343f) / 2.0f;
     
-    Serial.printf("Distance: %ld cm (duration: %lu us) on pin %d\n", distance, duration, echoPin);
+    //Serial.printf("Distance: %ld cm (duration: %lu us) on pin %d\n", distance, duration, echoPin);
     return distance;
 }
 
