@@ -7,6 +7,7 @@ class DistanceReader {
     private:
         int triggerPin;
         int echoPin;
+        const unsigned long PULSIN_TIMEOUT_US = 23200; // ~4 meters max distance (23200 microseconds)
     public:
         /// @brief Construct an uninitialized distance reader.
         DistanceReader();

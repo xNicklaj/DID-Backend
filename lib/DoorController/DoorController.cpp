@@ -14,7 +14,7 @@ void DoorController::init(int doorId, int pin, int triggerPin, int echoPin, int 
 
 void DoorController::OpenDoor(){
     Serial.printf("Standby. Opening the door on pin %d...\n", servoController.getPin());
-    servoController.setAngle(OPEN_ANGLE, 100); // Open position
+    servoController.setAngle(OPEN_ANGLE, 70); // Open position
     timer = 0;
     lastUpdateTime = millis();
 
@@ -22,7 +22,7 @@ void DoorController::OpenDoor(){
 }
 
 void DoorController::CloseDoor(){
-    servoController.setAngle(CLOSED_ANGLE, 100); // Closed position
+    servoController.setAngle(CLOSED_ANGLE, 70); // Closed position
     Serial.printf("Door closed on pin %d.\n", servoController.getPin());
 
     setDirty();
@@ -50,27 +50,31 @@ void DoorController::setup(){
 }
 
 void DoorController::syncState(){
+    if (!rtdb) return; // Skip if RTDB not initialized
+    if(!rtdb->isConnected()) return;
+    
+    // Batch all updates into a single JSON update to minimize blocking time
     char path[50];
-
-    snprintf(path, sizeof(path), "/doors/%d/state", id);
-    rtdb->setBool(path, getDoorState() != DoorState::DOOR_CLOSED);
-
-    snprintf(path, sizeof(path), "/doors/%d/hasProduct", id);
-    rtdb->setBool(path, getDistanceState() == DistanceState::DETECTED);
-
-    snprintf(path, sizeof(path), "/doors/%d/isTimerRunning", id);
-    rtdb->setBool(path, timer > 0);
+    snprintf(path, sizeof(path), "/doors/%d", id);
+    
+    FirebaseJson json;
+    json.set("state", getDoorState() != DoorState::DOOR_CLOSED);
+    json.set("hasProduct", getDistanceState() == DistanceState::DETECTED);
+    json.set("isTimerRunning", timer > 0);
+    
+    rtdb->setJSON(path, json);
 }
 
 void DoorController::setDirty(){
+    if (!rtdb) return; // Skip if RTDB not initialized
+    
     char path[50];
     snprintf(path, sizeof(path), "/doors/%d/isDirty", id);
     rtdb->setBool(path, true);
 }
 
 void DoorController::update(){
-    syncState();
-
+    //syncState();
     if(servoController.getAngle() != OPEN_ANGLE) return;
     
     const unsigned long currentTime = millis();

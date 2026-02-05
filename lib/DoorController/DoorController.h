@@ -5,9 +5,9 @@
 #include <RTDBConnector.h>
 #include <DistanceReader.h>
 
-#define CLOSED_ANGLE 0
-#define OPEN_ANGLE 180
-#define DEFAULT_DISTANCE_THRESHOLD_CM 60
+#define CLOSED_ANGLE 80
+#define OPEN_ANGLE 20
+#define DEFAULT_DISTANCE_THRESHOLD_CM 29
 
 enum class DoorState{
     DOOR_CLOSED,

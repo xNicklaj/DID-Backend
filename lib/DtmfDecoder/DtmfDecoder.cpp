@@ -3,6 +3,7 @@
 
 DTMFDecoder::DTMFDecoder() {
     lastDecodedKey = 0;
+    lastCharacterTime = 0;
     memset(sequence, 0, SEQ_SIZE);
 }
 
@@ -41,6 +42,14 @@ void DTMFDecoder::addToSequence(char key) {
 char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
     //Debug(buff, buffSize);
 
+    // Check if sequence has timed out (no character detected for 3 seconds)
+    if (lastCharacterTime > 0 && (millis() - lastCharacterTime) > SEQUENCE_TIMEOUT_MS) {
+        if (getSequence().length() > 0) {
+            Serial.println("Sequence timeout - clearing...");
+            clearSequence();
+        }
+    }
+
     int maxRowIndex = -1;
     int maxColIndex = -1;
     float maxRowMag = 0;
@@ -74,6 +83,7 @@ char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
     // 4. Sequence Logic
     if (currentKey != 0 && currentKey != lastDecodedKey) {
         addToSequence(currentKey);
+        lastCharacterTime = millis(); // Update timestamp on new character
     }
 
     lastDecodedKey = currentKey;
@@ -93,6 +103,7 @@ String DTMFDecoder::getSequence() {
 void DTMFDecoder::clearSequence() {
     memset(sequence, 0, SEQ_SIZE);
     lastDecodedKey = 0;
+    lastCharacterTime = 0;
 }
 
 void DTMFDecoder::Debug(int32_t* buff, int buffSize) {

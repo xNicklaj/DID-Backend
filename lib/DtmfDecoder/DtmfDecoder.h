@@ -26,6 +26,8 @@ private:
     // --- Sequence Variables ---
     char sequence[SEQ_SIZE];
     char lastDecodedKey;
+    unsigned long lastCharacterTime; // Timestamp of last detected character
+    const unsigned long SEQUENCE_TIMEOUT_MS = 3000; // Clear sequence after 3 seconds of inactivity
 
     /**
      * Calculates the Magnitude of a specific frequency using the Goertzel Algorithm.

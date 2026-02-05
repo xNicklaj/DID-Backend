@@ -15,47 +15,6 @@ void RTDBConnector::update() {
         tryInit();
         return;
     }
-
-/*     if(Firebase.getBool(data, "/led/enabled")){
-        bool enabled = data.boolData();
-        if(!enabled){
-            LedController::getInstance().clear();
-            return;
-        }
-    }
-
-    if(Firebase.getString(data, "/led/color")){
-        String color = data.stringData();
-        color.trim();
-
-        // Accept formats: "#RRGGBB", "RRGGBB", "0xRRGGBB"
-        String s = color;
-        if (s.startsWith("#")) s = s.substring(1);
-        if (s.startsWith("0x") || s.startsWith("0X")) s = s.substring(2);
-
-        if (s.length() == 6) {
-            // parse hex
-            long val = strtol(s.c_str(), NULL, 16);
-            uint8_t r = (val >> 16) & 0xFF;
-            uint8_t g = (val >> 8) & 0xFF;
-            uint8_t b = val & 0xFF;
-            LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(r, g, b));
-        } else {
-            // fallback to named colors (case-insensitive)
-            String lc = color;
-            lc.toLowerCase();
-            if(lc == "red") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(255, 0, 0));
-            else if(lc == "green") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(0, 255, 0));
-            else if(lc == "blue") LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(0, 0, 255));
-            else LedController::getInstance().setAllPixelsColor(0);
-        }
-    }
-
-    if(Firebase.getFloat(data, "/led/brightness")){
-        float brightness = data.floatData();
-        brightness = constrain(brightness, 0.0, 1.0);
-        LedController::getInstance().setBrightness(brightness);
-    } */
 }
 
 void RTDBConnector::setWiFiConnector(WiFi_Connector* wifiConnector) {
@@ -95,6 +54,11 @@ bool RTDBConnector::setBool(const String& path, bool value) {
     return Firebase.setBool(data, path.c_str(), value);
 }
 
+bool RTDBConnector::setJSON(const String& path, FirebaseJson& json) {
+    if (!initialized) return false;
+    return Firebase.setJSON(data, path.c_str(), json);
+}
+
 bool RTDBConnector::getBool(const String& path, bool& outValue) {
     if (!initialized) return false;
     if (!Firebase.getBool(data, path.c_str())) return false;
@@ -107,4 +71,8 @@ bool RTDBConnector::getInt(const String& path, int& outValue) {
     if (!Firebase.getInt(data, path.c_str())) return false;
     outValue = data.intData();
     return true;
+}
+
+bool RTDBConnector::isConnected() const {
+    return initialized;
 }

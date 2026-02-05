@@ -36,6 +36,11 @@ public:
     /// @param value Boolean value to set.
     /// @return True if the operation succeeded.
     bool setBool(const String& path, bool value);
+    /// @brief Set a JSON object at the given RTDB path (for batched updates).
+    /// @param path RTDB path.
+    /// @param json FirebaseJson object to set.
+    /// @return True if the operation succeeded.
+    bool setJSON(const String& path, FirebaseJson& json);
     /// @brief Get a boolean value from the given RTDB path.
     /// @param path RTDB path.
     /// @param outValue Output parameter to receive the value.
@@ -46,6 +51,9 @@ public:
     /// @param outValue Output parameter to receive the value.
     /// @return True if the value was read successfully.
     bool getInt(const String& path, int& outValue);
+    /// @brief Check if the RTDB is connected and ready.
+    /// @return True if RTDB is initialized and connected.
+    bool isConnected() const;
 private:
     bool initialized = false;
     WiFi_Connector* wifi;

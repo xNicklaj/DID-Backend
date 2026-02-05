@@ -47,7 +47,9 @@ void timerDurationWorker(){
 
   lastDurationMs = durationMs;
   doorController[0]->setOpenDuration(durationMs);
-  doorController[1]->setOpenDuration(durationMs);
+  if (doorController[1] != nullptr) {
+    doorController[1]->setOpenDuration(durationMs);
+  }
   Serial.printf("Updated timerDuration: %d ms\n", durationMs);
 }
 
@@ -60,7 +62,11 @@ void open(String args){
   if(args.c_str()[0]){
     int doorId = args.c_str()[0] - '0';
     if(doorId >=0 && doorId < 2){
-      doorController[doorId]->OpenDoor();
+      if (doorController[doorId] != nullptr) {
+        doorController[doorId]->OpenDoor();
+      } else {
+        Serial.printf("Door %d not initialized.\n", doorId);
+      }
     }
   }
 }
@@ -74,10 +80,11 @@ void setup() {
 
   LedController::getInstance().setup();
 
-  doorController[0] = new DoorController(0, 13, 12, 35, 30000);
-  doorController[1] = new DoorController(1, 27, 25, 34, 30000);
-  
-  // 1. Setup Workers
+  doorController[0] = new DoorController(0, 13, 12, 35, 5000);
+  doorController[1] = new DoorController(1, 27, 26, 34, 5000);
+  doorController[0]->setRtdb(&rtdbConnector);
+  doorController[1]->setRtdb(&rtdbConnector);
+
   rtdbConnector.setWiFiConnector(&wifiConnector);
 
   codeWorker.setDecoder(&dtmfSystem);
@@ -85,15 +92,16 @@ void setup() {
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
   workerSystem.addWorker(timerDurationWorker, 1000);
+
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbConnector, 50);
   workerSystem.addWorker(&codeWorker, 50);
   workerSystem.addWorker(doorController[0], 50);
-  workerSystem.addWorker(doorController[1], 50);
+  //workerSystem.addWorker(doorController[1], 50);
 
 
   // 2. Setup Commands
-  commandSystem.registerCommand("*0F39#", open, 1);
+  commandSystem.registerCommand("*0B39#", open, 1);
 
   Serial.println("System Ready.");
 }
