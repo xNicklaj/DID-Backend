@@ -34,6 +34,7 @@ class DoorController : public Worker {
         int syncCounter = 0;
         void syncState();
         void setDirty();
+        void updateLEDDisplay();
     public:
         /// @brief Construct a DoorController and initialize its pins.
         /// @param doorId External ID of the door.

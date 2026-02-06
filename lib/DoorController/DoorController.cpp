@@ -1,4 +1,5 @@
 #include <DoorController.h>
+#include <LedController.h>
 
 DoorController::DoorController(int doorId, int pin, int triggerPin, int echoPin, int openDuration){
     init(doorId, pin, triggerPin, echoPin, openDuration);
@@ -18,6 +19,9 @@ void DoorController::OpenDoor(){
     timer = 1;
     lastUpdateTime = millis();
 
+    // Initialize LED display - all 8 LEDs white
+    updateLEDDisplay();
+
     syncState();
     setDirty();
 }
@@ -27,6 +31,10 @@ void DoorController::CloseDoor(){
     Serial.printf("Door closed on pin %d.\n", servoController.getPin());
 
     timer = 0;
+    
+    // Turn off all LEDs when door closes
+    LedController::getInstance().clear();
+    
     syncState();
     setDirty();
 }
@@ -51,6 +59,7 @@ void DoorController::setRtdb(RTDBConnector* connector){
 void DoorController::setup(){
     CloseDoor();
 }
+
 
 void DoorController::syncState(){
     if (!rtdb) {
@@ -84,6 +93,28 @@ void DoorController::setDirty(){
     rtdb->setBool(path, true);
 }
 
+void DoorController::updateLEDDisplay(){
+    // Each LED represents exactly 1/8th of the total time
+    int timePerLed = openTime / 8;
+    int ledsOff = timer / timePerLed;
+    int ledsToLight = 8 - ledsOff;
+    
+    // Ensure we're within bounds
+    if(ledsToLight > 8) ledsToLight = 8;
+    if(ledsToLight < 0) ledsToLight = 0;
+    
+    // Update LED strip with 80% white intensity (204 = 255 * 0.8)
+    uint32_t white = LedController::getInstance().Color(204, 204, 204);
+    for(int i = 0; i < 8; i++){
+        if(i < ledsToLight){
+            LedController::getInstance().setPixelColor(i, white, false);
+        } else {
+            LedController::getInstance().setPixelColor(i, 0, false);
+        }
+    }
+    LedController::getInstance().show();
+}
+
 void DoorController::update(){
 /*     syncCounter++;
     if(syncCounter >= SYNC_INTERVAL_UPDATES){
@@ -95,6 +126,9 @@ void DoorController::update(){
     const unsigned long currentTime = millis();
     timer += static_cast<int>(currentTime - static_cast<unsigned long>(lastUpdateTime));
     lastUpdateTime = static_cast<int>(currentTime);
+
+    // Update LED display to show timer progress
+    updateLEDDisplay();
 
     if(timer >= openTime){
         timer = 0;

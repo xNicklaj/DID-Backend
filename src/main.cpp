@@ -111,6 +111,20 @@ void setup() {
   // 2. Setup Commands
   commandSystem.registerCommand("*0B39#", open, 1);
 
+  // Flash green on boot with smooth fade out
+  LedController::getInstance().setAllPixelsColor(LedController::getInstance().Color(0, 255, 0));
+  delay(1000);
+  
+  // Smooth fade out
+  for(int brightness = 100; brightness >= 0; brightness -= 5){
+    LedController::getInstance().setBrightness(brightness / 100.0f);
+    LedController::getInstance().show();
+    delay(20);
+  }
+  LedController::getInstance().clear();
+
+  LedController::getInstance().setBrightness(.5f);
+
   Serial.println("System Ready.");
 }
 

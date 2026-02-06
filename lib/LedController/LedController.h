@@ -29,7 +29,7 @@ private:
 	LedController& operator=(const LedController&) = delete;
 
 	Adafruit_NeoPixel strip;
-	float brightness = 1.0f;
+	float brightness = 0.5f;
 };
 
 #endif
