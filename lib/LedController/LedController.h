@@ -5,7 +5,7 @@
 #include <Adafruit_NeoPixel.h>
 
 const uint16_t nPixels = 8;
-const uint8_t  nPin    = 14; // CHECK YOUR CONNECTIONS !!!
+const uint8_t  nPin    = 13; // CHECK YOUR CONNECTIONS !!!
 
 class LedController {
 public:

@@ -19,10 +19,10 @@ void SoundListener::setup(){
     };
 
     const i2s_pin_config_t pins = {
-        .bck_io_num = 33,
-        .ws_io_num = 25,
+        .bck_io_num = SCK_PIN,
+        .ws_io_num = WS_PIN,
         .data_out_num = -1,
-        .data_in_num = 32
+        .data_in_num = SD_PIN
     };
 
     esp_err_t res = i2s_driver_install(I2S_NUM_0, &i2s_config, 0, NULL);

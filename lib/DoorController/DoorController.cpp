@@ -15,9 +15,10 @@ void DoorController::init(int doorId, int pin, int triggerPin, int echoPin, int 
 void DoorController::OpenDoor(){
     Serial.printf("Standby. Opening the door on pin %d...\n", servoController.getPin());
     servoController.setAngle(OPEN_ANGLE, 70); // Open position
-    timer = 0;
+    timer = 1;
     lastUpdateTime = millis();
 
+    syncState();
     setDirty();
 }
 
@@ -25,6 +26,8 @@ void DoorController::CloseDoor(){
     servoController.setAngle(CLOSED_ANGLE, 70); // Closed position
     Serial.printf("Door closed on pin %d.\n", servoController.getPin());
 
+    timer = 0;
+    syncState();
     setDirty();
 }
 
@@ -68,7 +71,6 @@ void DoorController::syncState(){
     json.set("isOpen", getDoorState() != DoorState::DOOR_CLOSED);
     json.set("hasProduct", getDistanceState() == DistanceState::DETECTED);
     json.set("isTimerRunning", timer > 0);
-    
     rtdb->updateJSON(path, json);
     //Serial.printf("Synced door %d state to RTDB.\n", id);
 }
@@ -83,7 +85,11 @@ void DoorController::setDirty(){
 }
 
 void DoorController::update(){
-    syncState();
+/*     syncCounter++;
+    if(syncCounter >= SYNC_INTERVAL_UPDATES){
+        syncCounter = 0;
+        syncState();
+    } */
     if(servoController.getAngle() != OPEN_ANGLE) return;
     
     const unsigned long currentTime = millis();

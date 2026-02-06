@@ -8,6 +8,7 @@
 #define CLOSED_ANGLE 80
 #define OPEN_ANGLE 20
 #define DEFAULT_DISTANCE_THRESHOLD_CM 27
+#define SYNC_INTERVAL_UPDATES 10
 
 enum class DoorState{
     DOOR_CLOSED,
@@ -30,6 +31,7 @@ class DoorController : public Worker {
         int timer = 0;
         int lastUpdateTime = 0;
         int id = 0;
+        int syncCounter = 0;
         void syncState();
         void setDirty();
     public:

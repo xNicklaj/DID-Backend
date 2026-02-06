@@ -8,6 +8,10 @@
 #define SOUND_BUFFER_SIZE 256
 #define SAMPLING_RATE     8000
 
+#define WS_PIN 25
+#define SD_PIN 32
+#define SCK_PIN 33
+
 class SoundListener : public Worker {
 private:
     int32_t soundBuffer[SOUND_BUFFER_SIZE];

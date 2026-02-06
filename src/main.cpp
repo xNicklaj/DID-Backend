@@ -88,7 +88,7 @@ void setup() {
 
   LedController::getInstance().setup();
 
-  doorController[0] = new DoorController(0, 13, 12, 35, 5000);
+  doorController[0] = new DoorController(0, 14, 12, 35, 5000);
   doorController[1] = new DoorController(1, 27, 26, 34, 5000);
   doorController[0]->setRtdb(&rtdbConnector);
   doorController[1]->setRtdb(&rtdbConnector);
