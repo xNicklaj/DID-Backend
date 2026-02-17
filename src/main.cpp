@@ -53,6 +53,20 @@ void timerDurationWorker(){
   Serial.printf("Updated timerDuration: %d ms\n", durationMs);
 }
 
+void micThresholdWorker(){
+  static float lastThreshold = -1.0f;
+  float threshold = 0.0f;
+
+  if (!rtdbConnector.isConnected()) return;
+  if (!rtdbConnector.getFloat("/mic_threshold", threshold)) return;
+  if (threshold <= 0) return;
+  if (threshold == lastThreshold) return;
+
+  lastThreshold = threshold;
+  dtmfSystem.setThreshold(threshold);
+  Serial.printf("Updated mic_threshold: %f\n", threshold);
+}
+
 // ==========================================
 // COMMANDS (DTMF Actions)
 // ==========================================
@@ -91,7 +105,9 @@ void setup() {
   doorController[0] = new DoorController(0, 14, 12, 35, 5000);
   doorController[1] = new DoorController(1, 27, 26, 34, 5000);
   doorController[0]->setRtdb(&rtdbConnector);
+  doorController[0]->setClosedAngle(98);
   doorController[1]->setRtdb(&rtdbConnector);
+  doorController[1]->setOpenAngle(10);
 
   rtdbConnector.setWiFiConnector(&wifiConnector);
 
@@ -99,7 +115,8 @@ void setup() {
   codeWorker.setRTDBConnector(&rtdbConnector);
   workerSystem.addWorker(&listener, 20);
   workerSystem.addWorker(dtmfWorker, 25);
-  workerSystem.addWorker(timerDurationWorker, 1000);
+  workerSystem.addWorker(timerDurationWorker, 20000);
+  workerSystem.addWorker(micThresholdWorker, 20000);
 
   workerSystem.addWorker(&wifiConnector, 500);
   workerSystem.addWorker(&rtdbConnector, 50);

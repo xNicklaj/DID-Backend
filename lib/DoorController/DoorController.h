@@ -5,7 +5,7 @@
 #include <RTDBConnector.h>
 #include <DistanceReader.h>
 
-#define CLOSED_ANGLE 80
+#define CLOSED_ANGLE 90
 #define OPEN_ANGLE 20
 #define DEFAULT_DISTANCE_THRESHOLD_CM 27
 #define SYNC_INTERVAL_UPDATES 10
@@ -26,6 +26,8 @@ class DoorController : public Worker {
         ServoController servoController;
         DistanceReader distanceReader;
         RTDBConnector* rtdb;
+        int closedAngle = CLOSED_ANGLE;
+        int openAngle = OPEN_ANGLE;
         /// @brief Time the door remains open
         int openTime = 1000; // milliseconds
         int timer = 0;
@@ -70,6 +72,14 @@ class DoorController : public Worker {
 
         /// @brief Set the door open duration (milliseconds).
         void setOpenDuration(int openDurationMs);
+
+        /// @brief Set the door closed angle (degrees).
+        /// @param closedAngleDeg Angle for closed position.
+        void setClosedAngle(int closedAngleDeg);
+
+        /// @brief Set the door open angle (degrees).
+        /// @param openAngleDeg Angle for open position.
+        void setOpenAngle(int openAngleDeg);
 
         /// @brief Called by the scheduler to initialize the worker state.
         void setup() override;

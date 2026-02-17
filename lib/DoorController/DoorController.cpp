@@ -15,7 +15,7 @@ void DoorController::init(int doorId, int pin, int triggerPin, int echoPin, int 
 
 void DoorController::OpenDoor(){
     Serial.printf("Standby. Opening the door on pin %d...\n", servoController.getPin());
-    servoController.setAngle(OPEN_ANGLE, 70); // Open position
+    servoController.setAngle(openAngle, 70); // Open position
     timer = 1;
     lastUpdateTime = millis();
 
@@ -27,7 +27,7 @@ void DoorController::OpenDoor(){
 }
 
 void DoorController::CloseDoor(){
-    servoController.setAngle(CLOSED_ANGLE, 70); // Closed position
+    servoController.setAngle(closedAngle, 70); // Closed position
     Serial.printf("Door closed on pin %d.\n", servoController.getPin());
 
     timer = 0;
@@ -50,6 +50,14 @@ DistanceState DoorController::getDistanceState(){
 void DoorController::setOpenDuration(int openDurationMs){
     if (openDurationMs <= 0) return;
     openTime = openDurationMs;
+}
+
+void DoorController::setClosedAngle(int closedAngleDeg){
+    closedAngle = closedAngleDeg;
+}
+
+void DoorController::setOpenAngle(int openAngleDeg){
+    openAngle = openAngleDeg;
 }
 
 void DoorController::setRtdb(RTDBConnector* connector){
@@ -121,7 +129,7 @@ void DoorController::update(){
         syncCounter = 0;
         syncState();
     } */
-    if(servoController.getAngle() != OPEN_ANGLE) return;
+    if(servoController.getAngle() != openAngle) return;
     
     const unsigned long currentTime = millis();
     timer += static_cast<int>(currentTime - static_cast<unsigned long>(lastUpdateTime));
@@ -138,7 +146,7 @@ void DoorController::update(){
 
 DoorState DoorController::getDoorState(){
     int angle = servoController.getAngle();
-    if(angle == CLOSED_ANGLE) return DoorState::DOOR_CLOSED;
-    if(angle == OPEN_ANGLE) return DoorState::DOOR_OPEN;
+    if(angle == closedAngle) return DoorState::DOOR_CLOSED;
+    if(angle == openAngle) return DoorState::DOOR_OPEN;
     return DoorState::DOOR_TRANSITIONING;
 }

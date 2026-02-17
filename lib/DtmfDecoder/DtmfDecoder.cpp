@@ -5,6 +5,7 @@ DTMFDecoder::DTMFDecoder() {
     lastDecodedKey = 0;
     lastCharacterTime = 0;
     memset(sequence, 0, SEQ_SIZE);
+    dtmfThreshold = DEFAULT_DTMF_THRESHOLD;
 }
 
 float DTMFDecoder::Goertzel(float freq0, int32_t* buff, int buffSize) {
@@ -76,7 +77,7 @@ char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
     char currentKey = 0;
 
     // 3. Validation
-    if (maxRowMag > DTMF_THRESHOLD && maxColMag > DTMF_THRESHOLD) {
+    if (maxRowMag > dtmfThreshold && maxColMag > dtmfThreshold) {
         currentKey = DTMF_KEYS[maxRowIndex][maxColIndex];
     }
 
@@ -88,6 +89,16 @@ char DTMFDecoder::detectDTMF(int32_t* buff, int buffSize) {
 
     lastDecodedKey = currentKey;
     return currentKey;
+}
+
+void DTMFDecoder::setThreshold(float threshold) {
+    if (threshold > 0) {
+        dtmfThreshold = threshold;
+    }
+}
+
+float DTMFDecoder::getThreshold() const {
+    return dtmfThreshold;
 }
 
 String DTMFDecoder::getSequence() {

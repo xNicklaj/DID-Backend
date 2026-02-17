@@ -56,6 +56,11 @@ public:
     /// @param outValue Output parameter to receive the value.
     /// @return True if the value was read successfully.
     bool getInt(const String& path, int& outValue);
+    /// @brief Get a float value from the given RTDB path.
+    /// @param path RTDB path.
+    /// @param outValue Output parameter to receive the value.
+    /// @return True if the value was read successfully.
+    bool getFloat(const String& path, float& outValue);
     /// @brief Check if the RTDB is connected and ready.
     /// @return True if RTDB is initialized and connected.
     bool isConnected() const;

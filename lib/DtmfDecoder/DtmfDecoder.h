@@ -7,7 +7,7 @@
 #define SEQ_SIZE 8
 
 // --- DTMF Configuration ---
-#define DTMF_THRESHOLD 1000000000.0 
+static constexpr float DEFAULT_DTMF_THRESHOLD = 100000000.0f;
 
 class DTMFDecoder {
 private:
@@ -29,6 +29,8 @@ private:
     unsigned long lastCharacterTime; // Timestamp of last detected character
     const unsigned long SEQUENCE_TIMEOUT_MS = 3000; // Clear sequence after 3 seconds of inactivity
 
+    float dtmfThreshold;
+
     /**
      * Calculates the Magnitude of a specific frequency using the Goertzel Algorithm.
      */
@@ -46,6 +48,16 @@ public:
      * Scans the buffer for DTMF tones.
      */
     char detectDTMF(int32_t* buff, int buffSize);
+
+    /**
+     * Updates the DTMF magnitude threshold.
+     */
+    void setThreshold(float threshold);
+
+    /**
+     * Returns the current DTMF threshold.
+     */
+    float getThreshold() const;
 
     /**
      * Returns the latest N keys as a string (e.g., "12345")

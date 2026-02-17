@@ -78,6 +78,13 @@ bool RTDBConnector::getInt(const String& path, int& outValue) {
     return true;
 }
 
+bool RTDBConnector::getFloat(const String& path, float& outValue) {
+    if (!initialized) return false;
+    if (!Firebase.getFloat(data, path.c_str())) return false;
+    outValue = data.floatData();
+    return true;
+}
+
 bool RTDBConnector::isConnected() const {
     return initialized;
 }
